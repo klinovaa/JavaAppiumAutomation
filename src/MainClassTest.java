@@ -5,10 +5,9 @@ public class MainClassTest {
     MainClass Main = new MainClass();
 
     @Test
-    public void testGetLocalNumber(){
-       int expected = 14;
-       if (Main.getLocalNumber() != expected) {
-           Assert.fail("Variable getLocalNumber doesn't equal 14");
-       }
+    public void testGetClassNumber() {
+        if (Main.getClassNumber() < 45) {
+            Assert.fail("Variable getClassNumber is less than 45");
+        }
     }
 }
