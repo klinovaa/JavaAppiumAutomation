@@ -5,9 +5,11 @@ public class MainClassTest {
     MainClass Main = new MainClass();
 
     @Test
-    public void testGetClassNumber() {
-        if (Main.getClassNumber() < 45) {
-            Assert.fail("Variable getClassNumber is less than 45");
+    public void testGetClassString() {
+        String sub = "Hello";
+        if (Main.getClassString().contains(sub)) {}
+        else {
+            Assert.fail("String class_string has no text \"Hello\" in it");
         }
     }
 }
