@@ -7,9 +7,10 @@ public class MainClassTest {
     @Test
     public void testGetClassString() {
         String sub = "Hello";
-        if (Main.getClassString().contains(sub)) {}
+        String sub2 = "hello";
+        if (Main.getClassString().contains(sub) | Main.getClassString().contains(sub2)) {}
         else {
-            Assert.fail("String class_string has no text \"Hello\" in it");
+            Assert.fail("String class_string has no text \"Hello\" or \"hello\" in it");
         }
     }
 }
