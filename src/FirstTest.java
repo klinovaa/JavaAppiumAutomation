@@ -42,6 +42,35 @@ public class FirstTest {
     }
 
     @Test
+    public void testAssertTitle()
+    {
+        waitForElementAndClick(
+                By.id("org.wikipedia:id/search_container"),
+                "Can't find 'Search Wikipedia' input",
+                5
+        );
+
+        String search_line = "Java";
+        waitForElementAndSendKeys(
+                By.xpath("//*[contains(@text, 'Search…')]"),
+                search_line,
+                "Can't find search input",
+                5
+        );
+
+        waitForElementAndClick(
+                By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                "Can't find 'Object-oriented programming language' topic searching by 'Java'",
+                15
+        );
+
+        assertElementPresent(
+                By.xpath("org.wikipedia:id/view_page_title_text"),
+                "Can't find article title"
+        );
+    }
+
+    @Test
     public void testSaveTwoArticlesToMyList()
     {
         waitForElementAndClick(
@@ -334,6 +363,15 @@ public class FirstTest {
         int amount_of_elements = getAmountOfElements(by);
         if (amount_of_elements > 0) {
             String default_message = "An element '" + by.toString() + "' supposed to be not present";
+            throw new AssertionError(default_message + " " + error_message);
+        }
+    }
+
+    private void assertElementPresent(By by, String error_message)
+    {
+        int amount_of_elements = getAmountOfElements(by);
+        if (amount_of_elements == 0) {
+            String default_message = "An element '" + by.toString() + "' should be present";
             throw new AssertionError(default_message + " " + error_message);
         }
     }
