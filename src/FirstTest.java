@@ -43,65 +43,6 @@ public class FirstTest {
     }
 
     @Test
-    public void testCheckRotation()
-    {
-            waitForElementAndClick(
-                    By.id("org.wikipedia:id/search_container"),
-                    "Can't find 'Search Wikipedia' input",
-                    5
-            );
-
-            String search_line = "Java";
-            waitForElementAndSendKeys(
-                    By.xpath("//*[contains(@text, 'Search…')]"),
-                    search_line,
-                    "Can't find search input",
-                    5
-            );
-
-            waitForElementAndClick(
-                    By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
-                    "Can't find 'Object-oriented programming language' topic searching by " + search_line,
-                    5
-            );
-
-            String title_before_rotation = waitForElementAndGetAttribute(
-                    By.id("org.wikipedia:id/view_page_title_text"),
-                    "text",
-                    "Can't find title of article",
-                    15
-            );
-
-            driver.rotate(ScreenOrientation.LANDSCAPE);
-
-            String title_after_rotation = waitForElementAndGetAttribute(
-                    By.id("org.wikipedia:id/view_page_title_text"),
-                    "text",
-                    "Can't find title of article",
-                    15
-            );
-
-            Assert.assertEquals(
-                    "Article title have been changed after screen rotation",
-                    title_before_rotation,
-                    title_after_rotation
-            );
-
-            String title_after_second_rotation = waitForElementAndGetAttribute(
-                    By.id("org.wikipedia:id/view_page_title_text"),
-                    "text",
-                    "Can't find title of article",
-                    15
-            );
-
-            Assert.assertEquals(
-                    "Article title have been changed after screen rotation",
-                    title_before_rotation,
-                    title_after_second_rotation
-            );
-    }
-
-    @Test
     public void testAssertTitle()
     {
         waitForElementAndClick(
@@ -238,13 +179,13 @@ public class FirstTest {
                 By.xpath("//*[@resource-id='org.wikipedia:id/item_container']//*[@text='" + name_of_folder + "']"),
                 "Can't find created folder '" + name_of_folder + "' while adding article to reading list",
                 5
-        ); //ПОСЛЕ ЭТОГО СТЕПА ВИСНЕТ
+        );
 
         waitForElementAndClick(
                 By.xpath("//android.widget.ImageButton[@content-desc='Navigate up']"),
                 "Can't close article, can't find X link",
                 5
-        ); //ЭТОТ СТЕП НЕ ОТРАБАТЫВАЕТ
+        );
 
         waitForElementAndClick(
                 By.xpath("//android.widget.FrameLayout[@content-desc='My lists']"),
@@ -263,9 +204,8 @@ public class FirstTest {
                 "Can't find saved article"
         );
 
-        String search_result_locator = "//*[@text='" + article_description + "']";
         waitForElementPresent(
-                By.xpath(search_result_locator),
+                By.xpath("//*[@text='programming language']"),
                 "Can't find second article after deleting first one",
                 15
         );
@@ -278,8 +218,8 @@ public class FirstTest {
         );
 
         waitForElementAndClick(
-                By.xpath(search_result_locator),
-                "Can't open article with xpath" + search_result_locator,
+                By.xpath("//*[@text='programming language']"),
+                "Can't open article with xpath //*[@text='programming language'",
                 15
         );
 
