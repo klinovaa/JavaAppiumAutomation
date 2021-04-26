@@ -34,11 +34,71 @@ public class FirstTest {
         capabilities.setCapability("app", "/Users/darya/Desktop/JavaAppiumAutomation/apks/org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+        driver.rotate(ScreenOrientation.PORTRAIT);
     }
 
     @After
     public void tearDown(){
         driver.quit();
+    }
+
+    @Test
+    public void testCheckRotation()
+    {
+            waitForElementAndClick(
+                    By.id("org.wikipedia:id/search_container"),
+                    "Can't find 'Search Wikipedia' input",
+                    5
+            );
+
+            String search_line = "Java";
+            waitForElementAndSendKeys(
+                    By.xpath("//*[contains(@text, 'Search…')]"),
+                    search_line,
+                    "Can't find search input",
+                    5
+            );
+
+            waitForElementAndClick(
+                    By.xpath("//*[@resource-id='org.wikipedia:id/page_list_item_container']//*[@text='Object-oriented programming language']"),
+                    "Can't find 'Object-oriented programming language' topic searching by " + search_line,
+                    5
+            );
+
+            String title_before_rotation = waitForElementAndGetAttribute(
+                    By.id("org.wikipedia:id/view_page_title_text"),
+                    "text",
+                    "Can't find title of article",
+                    15
+            );
+
+            driver.rotate(ScreenOrientation.LANDSCAPE);
+
+            String title_after_rotation = waitForElementAndGetAttribute(
+                    By.id("org.wikipedia:id/view_page_title_text"),
+                    "text",
+                    "Can't find title of article",
+                    15
+            );
+
+            Assert.assertEquals(
+                    "Article title have been changed after screen rotation",
+                    title_before_rotation,
+                    title_after_rotation
+            );
+
+            String title_after_second_rotation = waitForElementAndGetAttribute(
+                    By.id("org.wikipedia:id/view_page_title_text"),
+                    "text",
+                    "Can't find title of article",
+                    15
+            );
+
+            Assert.assertEquals(
+                    "Article title have been changed after screen rotation",
+                    title_before_rotation,
+                    title_after_second_rotation
+            );
     }
 
     @Test
