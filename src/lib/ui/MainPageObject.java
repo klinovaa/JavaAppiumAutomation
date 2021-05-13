@@ -106,17 +106,38 @@ public class MainPageObject {
     public void swipeUpToFindElement(String locator, String error_message, int max_swipes)
     {
         By by = this.getLocatorByString(locator);
-        int already_swipes = 0;
+        int already_swiped = 0;
         while (driver.findElements(by).size() == 0)
         {
-            if (already_swipes > max_swipes){
+            if (already_swiped > max_swipes){
                 waitForElementPresent(locator, "Can't find element by swiping up. \n" + error_message, 0);
                 return;
             }
 
             swipeUpQuick();
-            ++already_swipes;
+            ++already_swiped;
         }
+    }
+
+    public void swipeUpTillElementAppear(String locator, String error_message, int max_swipes)
+    {
+        int already_swiped = 0;
+        while (this.isElementLocatedOnTheScreen(locator))
+        {
+            if (already_swiped > max_swipes){
+                Assert.assertTrue(error_message, this.isElementLocatedOnTheScreen(locator));
+            }
+
+            swipeUpQuick();
+            ++already_swiped;
+        }
+    }
+
+    public boolean isElementLocatedOnTheScreen(String locator)
+    {
+        int element_location_by_y = this.waitForElementPresent(locator, "Can't find element by locator", 1).getLocation().getY();
+        int screen_size_by_y = driver.manage().window().getSize().getHeight();
+        return element_location_by_y < screen_size_by_y;
     }
 
     public void swipeElementToLeft(String locator, String error_message)
