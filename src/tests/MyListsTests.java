@@ -1,16 +1,23 @@
 package tests;
 
 import lib.CoreTestCase;
+import lib.Platform;
 import lib.ui.ArticlePageObject;
 import lib.ui.MyListsPageObject;
 import lib.ui.NavigationUI;
 import lib.ui.SearchPageObject;
 import lib.ui.factories.ArticlePageObjectFactory;
+import lib.ui.factories.MyListsPageObjectFactory;
+import lib.ui.factories.NavigationUIFactory;
 import lib.ui.factories.SearchPageObjectFactory;
 import org.junit.Test;
 
 public class MyListsTests extends CoreTestCase
 {
+    private static final String
+                                name_of_folder = "Learning programming",
+                                search_line = "Java";
+
     @Test
     public void testSaveFirstArticleToMyList()
     {
@@ -22,15 +29,22 @@ public class MyListsTests extends CoreTestCase
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
         String article_title = ArticlePageObject.getArticleTitle();
-        String name_of_folder = "Learning programming";
-        ArticlePageObject.addArticleToMyList(name_of_folder);
+
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToMyList(name_of_folder);
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
+            ArticlePageObject.closeArticleOverlay();
+        }
         ArticlePageObject.closeArticle();
 
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.clickMyLists();
 
-        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
-        MyListsPageObject.openFolderByName(name_of_folder);
+        MyListsPageObject MyListsPageObject = MyListsPageObjectFactory.get(driver);
+        if (Platform.getInstance().isAndroid()) {
+            MyListsPageObject.openFolderByName(name_of_folder);
+        }
         MyListsPageObject.swipeByArticleToDelete(article_title);
     }
 
@@ -38,41 +52,68 @@ public class MyListsTests extends CoreTestCase
     public void testSaveTwoArticlesToMyList() {
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
-        String search_line = "Java";
         SearchPageObject.typeSearchLine(search_line);
         SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
 
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
         String article_title = ArticlePageObject.getArticleTitle();
-        String name_of_folder = "Learning programming";
-        ArticlePageObject.addArticleToMyList(name_of_folder);
-        ArticlePageObject.closeArticle();
 
-        SearchPageObject.initSearchInput();
-        SearchPageObject.typeSearchLine(search_line);
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToMyList(name_of_folder);
+            ArticlePageObject.closeArticle();
+            SearchPageObject.initSearchInput();
+            SearchPageObject.typeSearchLine(search_line);
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
+            ArticlePageObject.closeArticleOverlay();
+            ArticlePageObject.searchWikipedia();
+        }
+
         SearchPageObject.clickByArticleWithSubstring("Programming language");
 
         ArticlePageObject.waitForTitleElement();
-        ArticlePageObject.addArticleToCreatedList(name_of_folder);
-        ArticlePageObject.closeArticle();
+        if (Platform.getInstance().isAndroid()) {
+            ArticlePageObject.addArticleToCreatedList(name_of_folder);
+            ArticlePageObject.closeArticle();
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
+            ArticlePageObject.tapToGoHome();
+        }
 
-        NavigationUI NavigationUI = new NavigationUI(driver);
+        NavigationUI NavigationUI = NavigationUIFactory.get(driver);
         NavigationUI.clickMyLists();
 
-        MyListsPageObject MyListsPageObject = new MyListsPageObject(driver);
-        MyListsPageObject.openFolderByName(name_of_folder);
+        MyListsPageObject MyListsPageObject = MyListsPageObjectFactory.get(driver);
+        if (Platform.getInstance().isAndroid()) {
+            MyListsPageObject.openFolderByName(name_of_folder);
+        }
         MyListsPageObject.swipeByArticleToDelete(article_title);
 
-        String article_description = "programming language";
-        MyListsPageObject.waitForArticleToAppearByDescription(article_description);
-        String title_of_article_before_opening = MyListsPageObject.getArticleTitle();
-        MyListsPageObject.openArticleByDescription(article_description);
-        String title_of_article_after_opening = ArticlePageObject.getArticleTitle();
-        assertEquals(
-                "Article title have been changed after opening the article",
-                title_of_article_before_opening,
-                title_of_article_after_opening
-        );
+        /*отрефакторить?*/
+        if (Platform.getInstance().isAndroid()) {
+            String article_description = "programming language";
+            MyListsPageObject.waitForArticleToAppearByDescription(article_description);
+            String title_of_article_before_opening = MyListsPageObject.getArticleTitle();
+            MyListsPageObject.openArticleByDescription(article_description);
+            String title_of_article_after_opening = ArticlePageObject.getArticleTitle();
+            assertEquals(
+                    "Article title have been changed after opening the article",
+                    title_of_article_before_opening,
+                    title_of_article_after_opening
+            );
+        } else {
+            String article_description = "High-level programming language";
+            MyListsPageObject.waitForArticleToAppearByDescription(article_description);
+            String title_of_article_before_opening = MyListsPageObject.getArticleTitle();
+            MyListsPageObject.openArticleByDescription(article_description);
+            String title_of_article_after_opening = MyListsPageObject.getArticleTitle();
+            assertEquals(
+                    "Article title have been changed after opening the article",
+                    title_of_article_before_opening,
+                    title_of_article_after_opening
+            );
+        }
+        /*отрефакторить?*/
     }
 }

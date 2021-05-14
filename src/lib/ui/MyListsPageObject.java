@@ -1,14 +1,15 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 
-public class MyListsPageObject extends MainPageObject
+abstract public class MyListsPageObject extends MainPageObject
 {
-    public static final String
-            FOLDER_BY_NAME_TPL = "xpath://*[@text='{FOLDER_NAME}']",
-            ARTICLE_BY_TITLE_TPL = "xpath://*[@text='{TITLE}']",
-            ARTICLE_BY_DESCRIPTION_TPL = "xpath://*[@text='{DESCRIPTION}']",
-            ARTICLE_TITLE = "id:org.wikipedia:id/page_list_item_title";
+    protected static String
+            FOLDER_BY_NAME_TPL,
+            ARTICLE_BY_TITLE_TPL,
+            ARTICLE_BY_DESCRIPTION_TPL,
+            ARTICLE_TITLE;
 
     /* TEMPLATE METHODS */
     private static String getFolderXpathByName(String name_of_folder)
@@ -60,20 +61,27 @@ public class MyListsPageObject extends MainPageObject
     public void swipeByArticleToDelete(String article_title)
     {
         this.waitForArticleToAppearByTitle(article_title);
-        String article_xpath = getFolderXpathByName(article_title);
+        String article_xpath = getSaveArticleXpathByTitle(article_title);
         this.swipeElementToLeft(article_xpath, "Can't find saved article");
 
+        if (Platform.getInstance().isIOS()){
+            this.clickElementToTheRightUpperCorner(article_xpath, "Can't find saved article");
+        }
         this.waitForArticleToDisappearByTitle(article_title);
     }
 
     public String getArticleTitle()
     {
-        return this.waitForElementAndGetAttribute(ARTICLE_TITLE, "text", "Can't find title of article when article is in reading list", 15);
+        if (Platform.getInstance().isAndroid()){
+            return this.waitForElementAndGetAttribute(ARTICLE_TITLE, "text", "Can't find title of article when article is in reading list", 15);
+        } else {
+            return this.waitForElementAndGetAttribute(ARTICLE_TITLE, "name", "Can't find title of article when article is in reading list", 15);
+        }
     }
 
     public void openArticleByDescription(String article_description)
     {
-        String article_name_xpath = getFolderXpathByName(article_description);
+        String article_name_xpath = getSaveArticleXpathByDescription(article_description);
         this.waitForElementAndClick(article_name_xpath, "Can't find title by description " + article_description, 5);
     }
 }
